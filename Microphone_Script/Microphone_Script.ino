@@ -1,44 +1,94 @@
-#include <arduinoFFT.h>
+#include <FastLED.h>
 
-#define SAMPLES 128
-#define SAMPLING_FREQUENCY 2048  // In Hz
+#define LED_PIN 2
+#define NUM_LEDS 2
+#define MIC1_PIN A0
+#define MIC2_PIN A1
 
-// Create an FFT instance with double precision and 128 samples
-ArduinoFFT<double> FFT;
+CRGB leds[NUM_LEDS];
 
-unsigned int samplingPeriod;
-unsigned long microSeconds;
+const int threshold = 512; // Mid-point for zero-crossing
 
-double vReal[SAMPLES];
-double vImag[SAMPLES];
+// State for Mic 1
+unsigned long prevTime1 = 0, periodSum1 = 0;
+int crossings1 = 0;
+bool wasAbove1 = false;
+
+// State for Mic 2
+unsigned long prevTime2 = 0, periodSum2 = 0;
+int crossings2 = 0;
+bool wasAbove2 = false;
+
+const int maxCrossings = 10;
 
 void setup() {
+  pinMode(MIC1_PIN, INPUT);
+  pinMode(MIC2_PIN, INPUT);
   Serial.begin(115200);
-  samplingPeriod = round(1000000.0 / SAMPLING_FREQUENCY);
+  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
+  FastLED.setMaxPowerInVoltsAndMilliamps(5, 500);
+  FastLED.clear();
+  FastLED.show();
 }
 
 void loop() {
-  // Collect samples
-  for (int i = 0; i < SAMPLES; i++) {
-    microSeconds = micros();
-    vReal[i] = analogRead(A0);  // Input from microphone module
-    vImag[i] = 0;
+  handleMic(MIC1_PIN, 0, &prevTime1, &periodSum1, &crossings1, &wasAbove1);
+  handleMic(MIC2_PIN, 1, &prevTime2, &periodSum2, &crossings2, &wasAbove2);
+}
 
-    while (micros() < (microSeconds + samplingPeriod)) {
-      // Wait to maintain sampling rate
+void handleMic(int micPin, int ledIndex,
+               unsigned long* prevTime, unsigned long* periodSum,
+               int* crossings, bool* wasAbove) {
+
+  int sample = analogRead(micPin);
+  bool isAbove = sample > threshold;
+
+  if (isAbove && !(*wasAbove)) {
+    unsigned long now = micros();
+
+    if (*crossings > 0) {
+      unsigned long period = now - *prevTime;
+      *periodSum += period;
+    }
+
+    *prevTime = now;
+    (*crossings)++;
+
+    if (*crossings >= maxCrossings) {
+      float avgPeriod = *periodSum / float(*crossings - 1);
+      float frequency = 1000000.0 / avgPeriod;
+
+      // Print debug info
+      Serial.print("Mic ");
+      Serial.print(micPin == MIC1_PIN ? "1" : "2");
+      Serial.print(" - Freq: ");
+      Serial.print(frequency);
+      Serial.print(" Hz, Amp: ");
+      Serial.println(sample);
+
+      // Update LED for this mic
+      updateLED(ledIndex, sample, frequency);
+
+      // Reset for next cycle
+      *periodSum = 0;
+      *crossings = 0;
     }
   }
 
-  // Run FFT
-  FFT.windowing(vReal, SAMPLES, FFTWindow::Hamming, FFTDirection::Forward);
-  FFT.compute(vReal, vImag, SAMPLES, FFTDirection::Forward);
-  FFT.complexToMagnitude(vReal, vImag, SAMPLES);
+  *wasAbove = isAbove;
+}
 
-  // Find and print the peak frequency
-  double peak = FFT.majorPeak(vReal, SAMPLES, SAMPLING_FREQUENCY);
-  Serial.print("Peak Frequency: ");
-  Serial.print(peak);
-  Serial.println(" Hz");
+void updateLED(int ledIndex, int amplitude, float frequency) {
+  // Constrain frequency and map to RGB colour (low = red, high = blue)
+  frequency = constrain(frequency, 100, 1500);
+  amplitude = constrain(amplitude, 200, 800);
+  uint8_t red = map(frequency, 100, 1500, 255, 0);
+  uint8_t blue = map(frequency, 100, 1500, 0, 255);
 
-  delay(500);  // Optional: pause to make serial output readable
+  // Map amplitude to brightness
+  uint8_t brightness = map(amplitude, 300, 800, 20, 255);
+
+  leds[ledIndex] = CRGB(red, 0, blue);
+  FastLED.setBrightness(brightness);
+  FastLED.show();
 }
