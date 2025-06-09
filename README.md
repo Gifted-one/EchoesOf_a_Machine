@@ -69,7 +69,7 @@ For **KissFFT**:
 - Copy `kiss_fft.c`, `kiss_fft.h`, `kiss_fftr.c`, `kiss_fftr.h` into the sketch folder
 - locate and delete.
 
-```bash
+```swift
 Arduino/libraries/FastLED/src/third_party/cq_kernel/kiss_fft.c
 Arduino/libraries/FastLED/src/third_party/cq_kernel/kiss_fftr.c
 
