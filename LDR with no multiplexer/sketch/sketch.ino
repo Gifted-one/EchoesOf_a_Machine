@@ -1,9 +1,21 @@
-
 #include <Adafruit_NeoPixel.h>
 #ifdef __AVR__
 #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
-#include <NewPing.h>// ultrasonic sensor library
+#include <NewPing.h>// ultrasonic sensor library 
+#include <Wire.h> //esp32 library 
+
+#include <avr/interrupt.h>
+ // Disable NewPing's timer
+// Timer2 variables for bird light control
+volatile bool birdLightOn = false;
+volatile unsigned long birdLightEndTime = 0;
+volatile unsigned long echoStart = 0;
+volatile unsigned long echoEnd = 0;
+volatile bool echoReceived = false;
+volatile bool measuring = false; 
+volatile bool lastPinState = LOW;
+
  //Neopixel pins
 #define PIXEL_PIN    6  // Digital IO pin connected to the NeoPixels.
 
@@ -20,8 +32,17 @@ const int numLeds = sizeof(ledPins) / sizeof(ledPins[0]);
 //Ultrasonic sensor(Bird dectection)
 #define trigPin 12 
 #define echoPin 13  
+//#define maxdistance 5
 bool birdPresent = false; 
-float threshold = 15.0; 
+float threshold = 6.0; 
+bool birdCurrentlyPresent = false;
+unsigned long lastBirdCheckTime = 0;
+const unsigned long birdCheckInterval = 200; // Check every 200ms 
+unsigned long birdDetectionTime = 0; 
+bool systemActive = true;  
+
+unsigned long birdLightTimer = 0;
+const unsigned long birdLightDuration = 5000; // 5 seconds
 
 //Led array demonstartion 
 const int chaseDelay = 150;   // delay between each chase step
@@ -53,9 +74,10 @@ unsigned long lastDirectionCheck = 0;
 const unsigned long directionCooldown = 500; // in ms
 
 //LDRS WITHOUT MULTIPLEXER
-const int ldrPins[5] = {A0, A1, A2, A3, A4};
-int ldrValues[5] = {0}; 
+const int ldrPins[4] = {A0, A1, A2, A3};
+int ldrValues[4] = {0}; 
 
+//NewPing sonar(trigPin, echoPin, maxdistance); 
 
 int Mux1_State[5] = {0};
 Adafruit_NeoPixel strip(PIXEL_COUNT, PIXEL_PIN, NEO_GRB + NEO_KHZ800);  
@@ -69,7 +91,7 @@ Adafruit_NeoPixel strip(PIXEL_COUNT, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 //   NEO_RGBW    Pixels are wired for RGBW bitstream (NeoPixel RGBW products)  
 boolean oldState = HIGH;
 int     mode     = 0; 
-bool showAnimations = false;   // Currently-active animation mode, 0-9 
+bool showAnimations = false;   // Currently-active animation mode, 0-9  
 void setup() { 
   //Mux pins 
   pinMode(pin_Out_S0, OUTPUT);
@@ -98,9 +120,20 @@ pinMode(trigPin, OUTPUT);
   attachInterrupt(digitalPinToInterrupt(pirRightPin), rightISR, RISING);// Changes from low to high for RightSensor
 
   Serial.begin(9600);   
-  delay(1000);
+  delay(100);
   start_time = millis();  
-  strip.begin() ;
+  strip.begin() ;  
+
+  //ESP32 
+  Wire.begin(8); // Slave address 8
+ // Wire.onReceive(receiveEvent); 
+ // Wire.onRequest(requestEvent);  
+
+  //======= 
+  // Set up pin change interrupt for echoPin (PD7)
+  // Set up pin change interrupt for echoPin (PB5 / Digital Pin 13)
+
+
 }
 
 void loop() { 
@@ -133,8 +166,20 @@ void loop() {
   } 
 
 // Bird in nest detection 
- CheckForBird(); 
+// triggerUltrasonic();
+  
+   // Get distance every 200ms
+CheckForBird();  
+if (!birdCurrentlyPresent) {
+    strip.clear(); 
+    digitalWrite(ledPins[1], LOW);
+    digitalWrite(ledPins[2], LOW);
+  } 
 
+if (!systemActive && millis() - birdDetectionTime >= 10000) {  // 10 sec cooldown
+  systemActive = true;  // Re-enable bird detection
+  Serial.println("Bird system reactivated.");
+}
 //For muliplexer
   /*int sum = 0;
   for (int i = 0; i < 5; i++) { 
@@ -144,7 +189,7 @@ void loop() {
   }*/ 
 
   int sum = 0;
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 4; i++) {
     sum += ldrValues[i];
     Serial.print(ldrValues[i]);
     if (i < 4) Serial.print(", ");
@@ -163,16 +208,19 @@ void loop() {
 
   // Use average to select animation
  if (!showAnimations) {
-  if (average <= 260) {
-    theaterChase(strip.Color(127,   0,   0), 50); // Red Chase
-  } else if (average <= 500) {
-    colorWipe(strip.Color(0, 0, 255), 50); // Blue Wipe
+  if (average <= 300) {
+    theaterChase(strip.Color(127,   0,   0), 10); // Red Chase
+  } 
+   else if (average <= 430) {
+    updateLEDSections(); // pink led sections 
+  } else if (average <= 530) {
+    colorWipe(strip.Color(0, 0, 255), 10); // Blue Wipe
   } else if (average <= 570) {
     ArrayNeoPixel(); 
-  } else if (average <= 700) {
-    rainbow(5); // Rainbow
+  } else if (average <= 650) {
+    Pattern(); // Rainbow
   } else {
-    theaterChaseRainbow(10); // Complex rainbow
+    theaterChaseRainbow(5); // Complex rainbow
   }
 }
  // delay(200);
@@ -269,8 +317,16 @@ void theaterChaseRainbow(int wait)
       delay(wait);                 // Pause for a moment
       firstPixelHue += 65536 / 90; // One cycle of color wheel over 90 frames
     }
-  }
-}  
+  } 
+}   
+void Pattern() 
+{
+  for (int i = 0; i < strip.numPixels(); i++) {
+      strip.setPixelColor(i, strip.Color(180, 180, 0)); // Solid green
+    }
+    strip.show();
+
+}
 void ArrayNeoPixel() 
 {
   int sum = 0;
@@ -462,30 +518,21 @@ for (int i = numLeds - 1; i >= 0; i--) {
   }
 
 } 
-//======= Bird in nest detector =======//
-void CheckForBird() {
-   float distance = getDistance(); 
-   int delayTime = 3000;
 
-  if (distance > 0 && distance < threshold) {
-    // Bird is close (in the nest)
-    digitalWrite(ledPins[1], HIGH);
-    digitalWrite(ledPins[2], HIGH); 
+//======= Bird in nest detector =======// 
 
-      for (int i = 0; i < strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(0, 255, 0)); // Full green
-  }
-  strip.show();
-  
-  delay(delayTime);  
-    Serial.println("Bird detected!");
-  } else {
-    digitalWrite(ledPins[1], LOW);
-    digitalWrite(ledPins[2], LOW); 
-    strip.clear(); 
-  }
+
+
+
+void triggerUltrasonic() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
 }
-float getDistance() {
+
+float calculateDistance() {
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   
@@ -496,4 +543,125 @@ float getDistance() {
   long duration = pulseIn(echoPin, HIGH);
   float dist = duration * 0.034 / 2.0;
   return dist;
+} 
+
+void CheckForBird() {
+  if (!systemActive) return;  // Skip if system is turned off
+
+  float distance = calculateDistance(); 
+  
+  if (distance > 0 && distance < threshold) {
+    // Bird detected (or still present)
+    if (!birdPresent) {
+      birdPresent = true;
+      showAnimations = true;  // Disable other animations
+      birdDetectionTime = millis();  // Record detection time
+      Serial.println("Bird detected! Playing green animation for 5 sec.");
+    }
+
+    // Keep green animation running while active
+    for (int i = 0; i < strip.numPixels(); i++) {
+      strip.setPixelColor(i, strip.Color(0, 255, 0)); // Solid green
+    }
+    strip.show(); 
+    delay(1500); 
+    strip.clear();
+
+    // Check if 5 seconds have passed
+    if (millis() - birdDetectionTime >= 5000) {
+      systemActive = false;  // Turn off entire bird detection
+      birdPresent = false;
+      showAnimations = false;
+      strip.clear();  // Turn off NeoPixels
+      strip.show();
+      Serial.println("5 sec elapsed. Bird system OFF.");
+    }
+
+    // Indicator LEDs (optional)
+    digitalWrite(ledPins[1], HIGH);
+    digitalWrite(ledPins[2], HIGH);
+  } 
+  else {
+    // No bird detected (or it left early)
+    if (birdPresent) {
+      birdPresent = false;
+      showAnimations = false;
+      strip.clear();  // Immediate shutoff
+      strip.show();
+      Serial.println("Bird left early. Resetting.");
+      
+      digitalWrite(ledPins[1], LOW);
+      digitalWrite(ledPins[2], LOW);
+    }
+  }
+}
+
+
+void requestEvent() {
+  Wire.write("ldrValue[0]");
+}  
+
+void updateLEDSections() {
+  strip.clear();
+
+  // LED mappings for each LDR (3 LEDs per section)
+  int ldrLEDs[4][3] = {
+    {0, 1, 2},     // LDR 0
+    {4, 5, 6},     // LDR 1
+    {8, 9, 10},    // LDR 2
+    {12, 13, 14}   // LDR 3
+  };
+
+  for (int i = 0; i < 4; i++) {
+    if (ldrValues[i] <= 530) {
+      int brightness = map(ldrValues[i], 200, 250, 20, 255);
+      brightness = constrain(brightness, 0, 255);
+
+      
+      uint32_t pink = strip.Color(brightness, brightness / 3, brightness / 2);
+
+      // Set all 3 LEDs for this LDR
+      for (int j = 0; j < 3; j++) {
+        strip.setPixelColor(ldrLEDs[i][j], pink);
+      }
+    } else {
+      // Turn off all 3 LEDs for this LDR
+      for (int j = 0; j < 3; j++) {
+        strip.setPixelColor(ldrLEDs[i][j], 0);
+      }
+    }
+  }
+
+  strip.show();
+} 
+//Testing 
+void turnOnBirdLights() {
+  for (int i = 0; i < PIXEL_COUNT; i++) {
+    strip.setPixelColor(i, strip.Color(0, 255, 0)); // Green
+  }
+  strip.show();
+  digitalWrite(ledPins[1], HIGH);
+  digitalWrite(ledPins[2], HIGH);
+}
+
+void turnOffBirdLights() {
+  strip.clear();
+  strip.show();
+  digitalWrite(ledPins[1], LOW);
+  digitalWrite(ledPins[2], LOW);
+}
+// Timer2 Compare Match Interrupt
+
+void lightRing() {
+  for (int i = 0; i < PIXEL_COUNT; i++) {
+    strip.setPixelColor(i, strip.Color(0, 255, 0));
+  }
+  strip.show();
+} 
+void clearRing() {
+  for (int i = 0; i < PIXEL_COUNT; i++) {
+    strip.setPixelColor(i, 0);
+  }
+  strip.show(); 
+  strip.clear();
 }

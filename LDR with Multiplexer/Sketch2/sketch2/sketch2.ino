@@ -21,7 +21,7 @@ const int numLeds = sizeof(ledPins) / sizeof(ledPins[0]);
 #define trigPin 12 
 #define echoPin 13  
 bool birdPresent = false; 
-float threshold = 15.0; 
+float threshold = 6.0; 
 bool birdCurrentlyPresent = false;
 unsigned long lastBirdCheckTime = 0;
 const unsigned long birdCheckInterval = 500; // Check every 500ms 
