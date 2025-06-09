@@ -28,7 +28,7 @@ Each LED corresponds to one mic and changes colour based on the peak frequency, 
 Here is the hardware schematic showing how the microphones and WS2812 LEDs connect to the ESP32:
 
 <p align="center">
-  <img src="assets/schematic.png" alt="Mic Circuit Schematic" width="600">
+  <img src="schematic.png" alt="Mic Circuit Schematic" width="600">
 </p>
 
 > **Each microphone** connects to its own **ADC pin** on the ESP32.  
