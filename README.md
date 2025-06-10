@@ -1,4 +1,4 @@
-# Mic Subsystem — ESP32 + Analog Mics + WS2812 Visualiser
+# A.Mic Subsystem — ESP32 + Analog Mics + WS2812 Visualiser (Subsystem 1)
 
 This project uses an ESP32 to read audio signals from **5 analog microphones**, processes each signal with **KISS FFT**, and visualises the **dominant frequency and amplitude** using a strip of **WS2812 RGB LEDs**.
 
@@ -123,14 +123,7 @@ mic-subsystem/
 ```
 
 ---
-
-## Credits
-
-- [KissFFT](https://github.com/mborgerding/kissfft) by Mark Borgerding
-- [FastLED](https://github.com/FastLED/FastLED) by Daniel Garcia and contributors
-
----
-# LDRs and PIR subsystem
+# B.LDRs,Bird motion and detection subsystem(Subsystem 2 and 3)
 
 This subsystem uses LDRs ,an Ardiuno uno microcontroller and a Neopixel ring.
 The LDRs detect the intensity of the light from the Mic system and outputs the result in patterns on the Neopixel ring varing on the intensity.
@@ -198,6 +191,7 @@ The LDRs along with their resistors are connected in parallel.
 ## Credits 
 -[Adafruit_NeoPixel]by Phil "Paint Your Dragon" Burgess for Adafruit Industries, with contributions by PJRC, Michael Miller and other members of the open source community.
 -[NewPing](https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home) by Tim Eckel
-
+- [KissFFT](https://github.com/mborgerding/kissfft) by Mark Borgerding
+- [FastLED](https://github.com/FastLED/FastLED) by Daniel Garcia and contributors
 
 
