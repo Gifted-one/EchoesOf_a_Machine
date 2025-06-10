@@ -199,6 +199,9 @@ cd LDR-subsystem
 - Arduino reads 4 analog sensors sequentially used to create an algorithic average that changes the NeoPixel animation 
 - Neopixel ring displays animations based on the data recieved.
 
+## Circuit Diagram 
+![LDR SETUP](Diagrams/LDRS.png)
+
   ## Folder Structure
 
 ```
