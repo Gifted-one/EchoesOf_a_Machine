@@ -190,8 +190,9 @@ The LDRs along with their resistors are connected in parallel.
 - Neopixel ring displays animations based on the data recieved.
 
 ## Credits 
--[Adafruit_NeoPixel]by Phil "Paint Your Dragon" Burgess for Adafruit Industries, with contributions by PJRC, Michael Miller and other members of the open source community. 
--[NewPing](https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home) by Tim Eckel
+
+- [Adafruit_NeoPixel]by Phil "Paint Your Dragon" Burgess for Adafruit Industries, with contributions by PJRC, Michael Miller and other members of the open source community. 
+- [NewPing](https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home) by Tim Eckel
 - [KissFFT](https://github.com/mborgerding/kissfft) by Mark Borgerding
 - [FastLED](https://github.com/FastLED/FastLED) by Daniel Garcia and contributors
 
