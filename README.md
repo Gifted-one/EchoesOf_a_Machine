@@ -140,28 +140,29 @@ The PIR sensors detect direction of motion "of the birds" and display light on t
 - 5 x 10k resistors
 - Neopixel ring
 - Wires
-- Analog digital multiplexer
+  
 
 ### Software 
   -  [Arduino IDE](https://www.arduino.cc/en/software)
+  -  Ardafruit library 
 
 ## Pin layout 
 
 |Component        | Arduino Pin|	Purpose                      |
 |-----------------|------------|-------------------------------|
-|NeoPixel Data	  | 6	         | Controls LED strip            |
+|NeoPixel Ring 	  | 6	         | Controls LED ring for patterns|
 |Left PIR Sensor	| 2 (INT0)	 | Motion detection (interrupt)  |
 |Right PIR Sensor | 3 (INT1)   |	Motion detection (interrupt) |
 |LED 1            | 4          |	Discrete LED output          |
-|LED 2            | 5	         | Discrete LED / PWM            |
-|LED 3            | 11	       | Discrete LED output           |
-|LED 4	          | 7	         | Discrete LED output           |
+|LED 2            | 5	         | LED output(low level)         |
+|LED 3            | 11	       | LED output(low level)         |
+|LED 4	          | 7	         | LED output(low level)         |
 |Ultrasonic Trig  | 12	       | HC-SR04 trigger pulse         |
 |Ultrasonic Echo  | 13	       | HC-SR04 echo pulse            |
-|Mux S0           | 8	         | Channel selection (bit 0)     |
-|Mux S1	          | 9	         | Channel selection (bit 1)     |
-|Mux S2	          | 10         |	Channel selection (bit 2)    |
-|Mux Analog In    | A0	       | Reads selected sensor value   |
+|LDR 1            | A0	       | Reads light intensity         |
+|LDR 2            | A1         | Reads light intensity         |
+|LDR 3            | A2         | Reads light intensity         |
+|LDR 4            | A3	       | Reads light intensity         |
 
 The LDRs along with their resistors are connected in parallel.
 
@@ -185,11 +186,11 @@ The LDRs along with their resistors are connected in parallel.
 ## How it works 
 - LDRs detect the intensity of the light from the LEDs in the mic subsystem and display the output in patterns on the neopixel ring.
 - PIR sensor detects the direction of motion of the birds by comparing trigger time stamps in a range of 15cm
-- Multiplexer reads 5 analog sensors sequentially
+- Arduino reads 4 analog sensors sequentially used to create an algorithic average that changes the NeoPixel animation 
 - Neopixel ring displays animations based on the data recieved.
 
 ## Credits 
--[Adafruit_NeoPixel]by Phil "Paint Your Dragon" Burgess for Adafruit Industries, with contributions by PJRC, Michael Miller and other members of the open source community.
+-[Adafruit_NeoPixel]by Phil "Paint Your Dragon" Burgess for Adafruit Industries, with contributions by PJRC, Michael Miller and other members of the open source community. 
 -[NewPing](https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home) by Tim Eckel
 - [KissFFT](https://github.com/mborgerding/kissfft) by Mark Borgerding
 - [FastLED](https://github.com/FastLED/FastLED) by Daniel Garcia and contributors
