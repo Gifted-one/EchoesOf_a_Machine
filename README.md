@@ -175,7 +175,7 @@ The LDRs along with their resistors are connected in parallel.
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/your-username/LDR-subsystem.git
+git clone https://github.com/yourusername/EchoesOf_a_Machine.git
 cd LDR-subsystem
 ```
 
@@ -184,7 +184,8 @@ cd LDR-subsystem
 - Search for and install:
     **Adafruit_NeoPixel.h**
      **avr/power.h**
-     **NewPing.h** 
+     **NewPing.h**
+     **HC-SR04.h**
 
 ### 3. Open and upload 
 - Open 'sketch.ino' in Ardiuno IDE
