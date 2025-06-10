@@ -210,7 +210,7 @@ Here is Representation of Simulation Schematic of System Model, the entire subsy
 <p align="center">
   <img src="/Diagrams/Wokwi Simulation.png" alt="Simulation Schematic" width="600">
 </p> 
----
+
 
   ## Folder Structure
 
@@ -222,7 +222,16 @@ LDR SYSTEM and Bird Simulation Final/
 ├── wokwi-project.txt
 
 ```
+---
 
+## Visualisation
+
+Use the **Serial monitor** in Arduino IDE to see raw analog data for each LDR.  
+To see the output of average when ldr cahnge and signal changes. 
+To see if a bird has been detected. 
+To see if Bird went from Left to Right or Right to Left
+
+---
 
 ## Credits 
 
