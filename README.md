@@ -232,6 +232,15 @@ To see if a bird has been detected.
 To see if Bird went from Left to Right or Right to Left
 
 ---
+---
+
+## Limitations
+
+- LDRs may have a slow response time in relation to hand blokage or Mic led brightness 
+- Bird detection has a delayed response time to return to idle state
+- Bird motion has some noise so false triggering and responds on its own accord, sometimes activating without any actual motion.Requires Better debouncing 
+
+---
 
 ## Credits 
 
