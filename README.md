@@ -154,20 +154,21 @@ The PIR sensors detect direction of motion "of the birds" and display light on t
 
 ## Pin layout 
 
-Component        | Arduino Pin|	Purpose
-NeoPixel Data	   | 6	        | Controls LED strip
-Left PIR Sensor	 | 2 (INT0)	  | Motion detection (interrupt)
-Right PIR Sensor | 3 (INT1)   |	Motion detection (interrupt)
-LED 1            | 4          |	Discrete LED output
-LED 2            | 5	        | Discrete LED / PWM
-LED 3            | 11	        | Discrete LED output
-LED 4	           | 7	        | Discrete LED output
-Ultrasonic Trig  | 12	        | HC-SR04 trigger pulse
-Ultrasonic Echo  | 13	        | HC-SR04 echo pulse
-Mux S0           | 8	        | Channel selection (bit 0)
-Mux S1	         | 9	        | Channel selection (bit 1)
-Mux S2	         | 10         |	Channel selection (bit 2)
-Mux Analog In    | A0	        | Reads selected sensor value
+|Component        | Arduino Pin|	Purpose                      |
+|-----------------|------------|-------------------------------|
+|NeoPixel Data	  | 6	         | Controls LED strip            |
+|Left PIR Sensor	| 2 (INT0)	 | Motion detection (interrupt)  |
+|Right PIR Sensor | 3 (INT1)   |	Motion detection (interrupt) |
+|LED 1            | 4          |	Discrete LED output          |
+|LED 2            | 5	         | Discrete LED / PWM            |
+|LED 3            | 11	       | Discrete LED output           |
+|LED 4	          | 7	         | Discrete LED output           |
+|Ultrasonic Trig  | 12	       | HC-SR04 trigger pulse         |
+|Ultrasonic Echo  | 13	       | HC-SR04 echo pulse            |
+|Mux S0           | 8	         | Channel selection (bit 0)     |
+|Mux S1	          | 9	         | Channel selection (bit 1)     |
+|Mux S2	          | 10         |	Channel selection (bit 2)    |
+|Mux Analog In    | A0	       | Reads selected sensor value   |
 
 The LDRs along with their resistors are connected in parallel.
 
