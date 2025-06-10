@@ -209,7 +209,9 @@ Here is Representation of Simulation Schematic of System Model, the entire subsy
 ---
 <p align="center">
   <img src="/Diagrams/Wokwi Simulation.png" alt="Simulation Schematic" width="600">
-</p>
+</p> 
+---
+
   ## Folder Structure
 
 ```
