@@ -205,6 +205,7 @@ Here is a circuit diagram of the connection the ldrs, the blue dots representing
 
 ---
 Here is Representation of Simulation Schematic of System Model, the entire subsystem in cohersion  
+
 ---
 <p align="center">
   <img src="/Diagrams/Wokwi Simulation.png" alt="Simulation Schematic" width="600">
