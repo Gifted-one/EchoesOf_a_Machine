@@ -127,7 +127,8 @@ mic-subsystem/
 
 This subsystem uses LDRs ,an Ardiuno uno microcontroller and a Neopixel ring.
 The LDRs detect the intensity of the light from the Mic system and outputs the result in patterns on the Neopixel ring varing on the intensity.
-The PIR sensors detect direction of motion "of the birds" and display light on the neopixel ring in direction of the motion as well as on the array of leds.
+The PIR sensors detect direction of motion "of the birds" and display light on the neopixel ring in direction of the motion as well as on the array of leds. 
+The Ultrasonic sensor detects a nearby hand acting as a bird, triggering a green NeoPixel animation. This visually represents the bird's (hand's) presence in the nest.
 
 ---
 
@@ -136,10 +137,14 @@ The PIR sensors detect direction of motion "of the birds" and display light on t
 ### Hardware
 
 - Ardino uno
-- 5 x LDRS
+- 4 x LDRS
 - 5 x 10k resistors
 - Neopixel ring
 - Wires
+- 2 x PIR Sensors
+- Ultrasonic sensor
+- 4 x Led
+  
   
 
 ### Software 
@@ -169,6 +174,10 @@ The LDRs along with their resistors are connected in parallel.
 ## Getting started 
 
 ### 1. Clone the repo
+```bash
+git clone https://github.com/your-username/LDR-subsystem.git
+cd LDR-subsystem
+```
 
 ### 2. Install the libraries 
 - Open the Library Manager (`Ctrl + Shift + I`)
@@ -185,9 +194,22 @@ The LDRs along with their resistors are connected in parallel.
 
 ## How it works 
 - LDRs detect the intensity of the light from the LEDs in the mic subsystem and display the output in patterns on the neopixel ring.
-- PIR sensor detects the direction of motion of the birds by comparing trigger time stamps in a range of 15cm
+- PIR sensor detects the direction of motion of the birds(wave of the hand) by comparing trigger time stamps in a range of 15cm
+- Ultrasonic sensor detects the proximity of a bird(hand) and displays the output in patterns on the neo pixel ring 
 - Arduino reads 4 analog sensors sequentially used to create an algorithic average that changes the NeoPixel animation 
 - Neopixel ring displays animations based on the data recieved.
+
+  ## Folder Structure
+
+```
+LDR SYSTEM and Bird Simulation Final/
+├── sketch.ino
+├── libraries.txt
+├── diagram.json
+├── wokwi-project.txt
+
+```
+
 
 ## Credits 
 
