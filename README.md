@@ -202,7 +202,8 @@ cd LDR-subsystem
 ## Circuit Diagram  
 Here is a circuit diagram of the connection the ldrs, the blue dots representing the connection to their corresponding arduino pins.
 ![LDR SETUP](Diagrams/LDRS.png)
-
+Here is Representation of Simulation Schematic of System Model, the entire subsystem in cohersion 
+![Wokwi Simulation](Diagrams/WokwiSimulation.png)
   ## Folder Structure
 
 ```
