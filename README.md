@@ -130,3 +130,74 @@ mic-subsystem/
 - [FastLED](https://github.com/FastLED/FastLED) by Daniel Garcia and contributors
 
 ---
+# LDRs and PIR subsystem
+
+This subsystem uses LDRs ,an Ardiuno uno microcontroller and a Neopixel ring.
+The LDRs detect the intensity of the light from the Mic system and outputs the result in patterns on the Neopixel ring varing on the intensity.
+The PIR sensors detect direction of motion "of the birds" and display light on the neopixel ring in direction of the motion.
+
+---
+
+## Components
+
+### Hardware
+
+- Ardino uno
+- 5 x LDRS
+- 5 x 10k resistors
+- Neopixel ring
+- Wires
+- Analog digital multiplexer
+
+### Software 
+  -  [Arduino IDE](https://www.arduino.cc/en/software)
+
+## Pin layout 
+
+|Component        | Arduino Pin|	Purpose                      |
+|-----------------|------------|-------------------------------|
+|NeoPixel Data	  | 6	         | Controls LED strip            |
+|Left PIR Sensor	| 2 (INT0)	 | Motion detection (interrupt)  |
+|Right PIR Sensor | 3 (INT1)   |	Motion detection (interrupt) |
+|LED 1            | 4          |	Discrete LED output          |
+|LED 2            | 5	         | Discrete LED / PWM            |
+|LED 3            | 11	       | Discrete LED output           |
+|LED 4	          | 7	         | Discrete LED output           |
+|Ultrasonic Trig  | 12	       | HC-SR04 trigger pulse         |
+|Ultrasonic Echo  | 13	       | HC-SR04 echo pulse            |
+|Mux S0           | 8	         | Channel selection (bit 0)     |
+|Mux S1	          | 9	         | Channel selection (bit 1)     |
+|Mux S2	          | 10         |	Channel selection (bit 2)    |
+|Mux Analog In    | A0	       | Reads selected sensor value   |
+
+The LDRs along with their resistors are connected in parallel.
+
+## Getting started 
+
+### 1. Clone the repo
+
+### 2. Install the libraries 
+- Open the Library Manager (`Ctrl + Shift + I`)
+- Search for and install:
+    **Adafruit_NeoPixel.h**
+     **avr/power.h**
+     **NewPing.h** 
+
+### 3. Open and upload 
+- Open 'sketch.ino' in Ardiuno IDE
+- Connect the Ardiunio uno
+- Select your **board** and the **port** you plugged it in
+- Upload the code
+
+## How it works 
+- LDRs detect the intensity of the light from the LEDs in the mic subsystem and display the output in patterns on the neopixel ring.
+- PIR sensor detects the direction of motion of the birds by comparing trigger time stamps in a range of 15cm
+- Multiplexer reads 5 analog sensors sequentially
+- Neopixel ring displays animations based on the data recieved.
+
+## Credits 
+-[Adafruit_NeoPixel]by Phil "Paint Your Dragon" Burgess for Adafruit Industries, with contributions by PJRC, Michael Miller and other members of the open source community.
+-[NewPing](https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home) by Tim Eckel
+
+
+
