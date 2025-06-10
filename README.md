@@ -149,7 +149,7 @@ The PIR sensors detect direction of motion "of the birds" and display light on t
 - Wires
 - Analog digital multiplexer
 
-## Software 
+### Software 
   -  [Arduino IDE](https://www.arduino.cc/en/software)
 
 ## Pin layout 
@@ -179,7 +179,9 @@ The LDRs along with their resistors are connected in parallel.
 ### 2. Install the libraries 
 - Open the Library Manager (`Ctrl + Shift + I`)
 - Search for and install:
-    **Adafruit_NeoPixel** 
+    **Adafruit_NeoPixel.h**
+     **avr/power.h**
+     **NewPing.h** 
 
 ### 3. Open and upload 
 - Open 'sketch.ino' in Ardiuno IDE
@@ -193,6 +195,9 @@ The LDRs along with their resistors are connected in parallel.
 - Multiplexer reads 5 analog sensors sequentially
 - Neopixel ring displays animations based on the data recieved.
 
- 
+## Credits 
+[Adafruit_NeoPixel]by Phil "Paint Your Dragon" Burgess for Adafruit Industries, with contributions by PJRC, Michael Miller and other members of the open source community.
+[NewPing](https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home) by Tim Eckel
+
 
 
