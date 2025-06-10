@@ -127,7 +127,7 @@ mic-subsystem/
 
 This subsystem uses LDRs ,an Ardiuno uno microcontroller and a Neopixel ring.
 The LDRs detect the intensity of the light from the Mic system and outputs the result in patterns on the Neopixel ring varing on the intensity.
-The PIR sensors detect direction of motion "of the birds" and display light on the neopixel ring in direction of the motion.
+The PIR sensors detect direction of motion "of the birds" and display light on the neopixel ring in direction of the motion as well as on the array of leds.
 
 ---
 
